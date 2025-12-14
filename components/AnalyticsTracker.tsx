@@ -28,7 +28,21 @@ export const AnalyticsTracker = () => {
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === "hidden") flushEvents();
+      if (document.visibilityState === "hidden") {
+        flushEvents();
+      } else {
+        fetch("/api/log", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            events: [...eventQueue.current],
+            timestamp: new Date().toISOString(),
+          }),
+          keepalive: true,
+        });
+      }
     };
 
     const handleBeforeUnload = () => {
