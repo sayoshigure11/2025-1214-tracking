@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { logDB } from "../lib/db";
 
 export async function trackEvent(type: string, payload: unknown) {
   const event = {
@@ -9,12 +8,6 @@ export async function trackEvent(type: string, payload: unknown) {
     payload,
     createdAt: Date.now(),
   };
-
-  // 永続化
-  await logDB.logs.add(event);
-
-  // // Workerに送信
-  // worker.postMessage(event)
 
   // Workerが存在する場合にのみ送信
   if (worker) {
