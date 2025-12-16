@@ -1,5 +1,5 @@
+import { trackEvent } from "@/components/AnalyticsProvider";
 import { assignExperiment, Variant } from "./experiment";
-import { trackEvent } from "./track";
 
 export function trackWithExperiment(
     abVariant: Variant,
