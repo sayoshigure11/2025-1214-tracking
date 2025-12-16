@@ -44,29 +44,6 @@ function sendDataWithFetch() {
   const payloadsToSend = [...payloadBuffer];
   payloadBuffer = []; // バッファクリア
 
-  //   fetch("/api/log", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ events: dataToSend }),
-  //     keepalive: true,
-  //   })
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         // 失敗した場合は、データをlogBufferに戻すか、エラーログとして別途処理する
-  //         console.error(
-  //           "定期送信失敗。データを再バッファリング。",
-  //           response.statusText
-  //         );
-  //         // logBuffer.push(...dataToSend); // 必要なら再送を試みる
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error("定期送信ネットワークエラー。", error);
-  //       // logBuffer.push(...dataToSend); // 必要なら再送を試みる
-  //     });
-
   // 結合して一括送信したい場合は、サーバー側のAPI設計に依存します
   // const combinedPayload = payloadsToSend.join('\n'); // 例: Newline Delimited JSON
 
@@ -74,9 +51,6 @@ function sendDataWithFetch() {
   // 🚨 実際にはこのfetchが失敗した場合のリカバリーロジックが必要です
 
   console.log("payloadToSend", payloadsToSend);
-  //   payloadsToSend.forEach((paypay) => {
-  //     console.log("paypay", paypay);
-  //   });
 
   // 1. fetchのPromise配列を作成する
   const fetchPromises = payloadsToSend.map((payload) =>
@@ -127,7 +101,6 @@ function setupAnalytics() {
     if (e.data.type === "LOG_DATA_PAYLOAD") {
       // Workerのデータ型に合わせて変更
       console.log("e.data.payload", e.data.payload);
-      //   payloadBuffer.push(...e.data.payload.events); // .eventsを追加
       payloadBuffer.push(e.data.payload); // .eventsを追加
       // Workerからデータを受け取ったら、すぐにfetchで送信を試みる
       sendDataWithFetch();
@@ -142,10 +115,6 @@ function setupAnalytics() {
     if (payloadBuffer.length > 0) {
       // sendBeaconは一つのデータしか送れないため、すべてのペイロードを一つの文字列に結合する（サーバーと仕様を合わせる）
       // 例として、配列として再度JSON化します (サーバー側の受け取りが配列の場合)
-      //   const combinedLogs = payloadBuffer
-      //     .map((p) => JSON.parse(p).events)
-      //     .flat();
-      //   const finalPayload = JSON.stringify({ events: combinedLogs });
       const finalPayload = payloadBuffer.join("\n");
       navigator.sendBeacon("/api/log", finalPayload);
       payloadBuffer = []; // クリア
@@ -155,12 +124,6 @@ function setupAnalytics() {
   if (typeof window !== "undefined") {
     window.addEventListener("pagehide", handlePageHide);
   }
-
-  //// 確認用
-  //   console.log("document", typeof document);
-  //   if (typeof document !== "undefined") {
-  //     document.addEventListener("visibilitychange", handlePageHide);
-  //   }
 }
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {

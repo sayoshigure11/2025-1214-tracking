@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { trackEvent } from "@/components/AnalyticsProvider";
 import { assignExperiment, Variant } from "./experiment";
 

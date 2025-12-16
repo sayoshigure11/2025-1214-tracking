@@ -14,7 +14,6 @@ export function assignExperiment(id: string, variant:Variant): Experiment {
         return {id, variant: stored as Variant}
     }
 
-    // const variant: Variant = Math.random() < 0.5 ? "A" : "B"
     localStorage.setItem(key, variant)
 
     return {id, variant}

@@ -4,16 +4,10 @@ import { trackWithExperiment } from "@/lib/trackWithExperiment";
 import { useState } from "react";
 
 export default function HomePage({ abVariant }: { abVariant: "A" | "B" }) {
-  //   const variant = trackWithExperiment("hero-copy-test", "page_view", {
-  //     path: "/",
-  //   });
   const [clickCount, setClickCount] = useState<number>(0);
 
   return (
     <main>
-      {/* <h1>
-        {variant === "A" ? "最短で学ぶ Next.js" : "Next.js を実務レベルへ"}
-      </h1> */}
       <h1>
         {abVariant === "A" ? "最短で学ぶ Next.js" : "Next.js を実務レベルへ"}
       </h1>
