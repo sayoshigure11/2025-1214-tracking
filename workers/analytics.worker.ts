@@ -2,7 +2,7 @@
 
 let buffer: unknown[] = []
 const BUFFER_SIZE_LIMIT = 10; // [設定] サイズによる即時送信の閾値
-const TIME_LIMIT_MS = 5000;   // [設定] 5秒ごとに強制送信
+const TIME_LIMIT_MS = 10000;   // [設定] 10秒ごとに強制送信
 
 // ----------------------------------------------------
 // (1) フラッシュ処理: メインスレッドへのデータ転送を実行
@@ -20,6 +20,7 @@ function flush() {
     // web workerはログの収集とバッファリングだけを担当
 
     // 🚀転送するペイロードをJSON文字列に変更
+    console.log("payload[worker]",payload)
     self.postMessage({
         type: "LOG_DATA_PAYLOAD", // データ型を区別
         payload: payload

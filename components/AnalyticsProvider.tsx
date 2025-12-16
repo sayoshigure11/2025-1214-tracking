@@ -73,6 +73,11 @@ function sendDataWithFetch() {
   // ここではシンプルに、取り出したペイロードを一つずつfetchで送る（Workerから受け取った単位）
   // 🚨 実際にはこのfetchが失敗した場合のリカバリーロジックが必要です
 
+  console.log("payloadToSend", payloadsToSend);
+  //   payloadsToSend.forEach((paypay) => {
+  //     console.log("paypay", paypay);
+  //   });
+
   // 1. fetchのPromise配列を作成する
   const fetchPromises = payloadsToSend.map((payload) =>
     fetch("/api/log", {
@@ -121,7 +126,9 @@ function setupAnalytics() {
   worker.onmessage = (e) => {
     if (e.data.type === "LOG_DATA_PAYLOAD") {
       // Workerのデータ型に合わせて変更
-      payloadBuffer.push(...e.data.payload);
+      console.log("e.data.payload", e.data.payload);
+      //   payloadBuffer.push(...e.data.payload.events); // .eventsを追加
+      payloadBuffer.push(e.data.payload); // .eventsを追加
       // Workerからデータを受け取ったら、すぐにfetchで送信を試みる
       sendDataWithFetch();
     }
@@ -129,16 +136,17 @@ function setupAnalytics() {
 
   // pagehideリスナーの設定（一度だけ）
   const handlePageHide = () => {
+    console.log("handlePageHide発火");
     // ページ離脱時の sendBeacon 処理
     // 🚀 修正点 4: sendBeaconでpayloadBufferのJSON文字列をそのまま使用
     if (payloadBuffer.length > 0) {
       // sendBeaconは一つのデータしか送れないため、すべてのペイロードを一つの文字列に結合する（サーバーと仕様を合わせる）
       // 例として、配列として再度JSON化します (サーバー側の受け取りが配列の場合)
-      const combinedLogs = payloadBuffer
-        .map((p) => JSON.parse(p).events)
-        .flat();
-      //   const finalPayload = JSON.stringify({ events: logBuffer });
-      const finalPayload = JSON.stringify({ events: combinedLogs });
+      //   const combinedLogs = payloadBuffer
+      //     .map((p) => JSON.parse(p).events)
+      //     .flat();
+      //   const finalPayload = JSON.stringify({ events: combinedLogs });
+      const finalPayload = payloadBuffer.join("\n");
       navigator.sendBeacon("/api/log", finalPayload);
       payloadBuffer = []; // クリア
     }
@@ -147,6 +155,12 @@ function setupAnalytics() {
   if (typeof window !== "undefined") {
     window.addEventListener("pagehide", handlePageHide);
   }
+
+  //// 確認用
+  //   console.log("document", typeof document);
+  //   if (typeof document !== "undefined") {
+  //     document.addEventListener("visibilitychange", handlePageHide);
+  //   }
 }
 
 export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
