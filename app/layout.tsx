@@ -36,7 +36,7 @@ export default function RootLayout({
             // analytics.track("scroll_depth", { percent: p });
           }}
         /> */}
-        {/* <AnalyticsRoot /> */}
+        <AnalyticsRoot />
         <AnalyticsProvider>{children}</AnalyticsProvider>
       </body>
     </html>
